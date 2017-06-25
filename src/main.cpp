@@ -34,9 +34,9 @@ int main()
 
   PID pid;
   // Initialize the pid variable.
-  double PID_p = 0.15;  // proportional coefficient
-  double PID_i = 0.0009;  // integral coefficient
-  double PID_d = 6;  // differential coefficient
+  double PID_p = 0.11;  // proportional coefficient
+  double PID_i = 0.0002;  // integral coefficient
+  double PID_d = 2;  // differential coefficient
 
   pid.Init(PID_p, PID_i, PID_d);
 
@@ -53,8 +53,8 @@ int main()
         if (event == "telemetry") {
           // j[1] is the data JSON object
           double cte = std::stod(j[1]["cte"].get<std::string>());
-          double speed = std::stod(j[1]["speed"].get<std::string>());
-          double angle = std::stod(j[1]["steering_angle"].get<std::string>());
+          //double speed = std::stod(j[1]["speed"].get<std::string>());
+          //double angle = std::stod(j[1]["steering_angle"].get<std::string>());
           double steer_value;
           
 		  pid.UpdateError(cte);
@@ -66,10 +66,11 @@ int main()
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
-		  if (fabs(steer_value) < 0.1)
-			  msgJson["throttle"] = 0.8;
-		  else
-			  msgJson["throttle"] = 0.3;
+		  // if (fabs(steer_value) < 0.1)
+			  // msgJson["throttle"] = 0.8;
+		  // else
+			  // msgJson["throttle"] = 0.3;
+		  msgJson["throttle"] = 0.3;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
